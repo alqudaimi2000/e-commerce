@@ -1,5 +1,5 @@
 import express from 'express';
-import { addOrRemoveItemToCart, getActiveCartForUser, removeItemFromCart } from '../services/cartService.js';
+import { addOrRemoveItemToCart, clearCartForUser, getActiveCartForUser, removeItemFromCart,  } from '../services/cartService.js';
 import validateJWT from '../middlewares/validateJWT.js';
 import type { ExtendRequest } from '../types/extendedRequest.js';
 const router = express.Router();
@@ -33,13 +33,21 @@ router.put('/items',validateJWT, async (req: ExtendRequest, res) => {
     res.status(response.statusCode).json(response);
 });
 
-router.delete('/items',validateJWT, async (req: ExtendRequest, res) => {
+router.delete('/items/:id',validateJWT, async (req: ExtendRequest, res) => {
     // Remove item from cart
     const userId = req?.user?._id;
-    const { productID } = req.body;
+    const productID = req.params.id;
+    
 
     // To remove completely, pass a large negative quantity
     const response = await removeItemFromCart({ userId, productID });
+    res.status(response.statusCode).json(response);
+});
+
+router.delete('/',validateJWT, async (req: ExtendRequest, res) => {
+    // Clear the entire cart
+    const userId = req?.user?._id;
+    const response = await clearCartForUser(userId);
     res.status(response.statusCode).json(response);
 });
 
