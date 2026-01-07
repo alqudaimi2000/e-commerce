@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import userRouter from "./routes/userRoute.js";
 import productRoute from './routes/productRoute.js';
 import { seedInitialProducts } from './services/productService.js';
+import cartRoute from './routes/cartRoute.js';
 
 // Create Express application instance
 const app = express();
@@ -35,6 +36,7 @@ app.use('/user', userRouter);
 
 app.use('/product', productRoute);
 
+app.use('/cart',cartRoute);
 // Root endpoint for API health check
 app.get('/', (req, res) => {
   res.send('Welcome to the E-commerce API');
