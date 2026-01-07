@@ -5,7 +5,7 @@ import type { Iuser } from "./userModel.js";
 
 const cartStatusEnum = ['active', 'completed', 'cancelled'] as const;
 
-export interface ICartProduct extends Document {
+export interface ICartProduct {
     productId: IProduct; // ID of the product
     quantity: number; // Quantity of the product in the cart
     unitPrice: number; // Price of the product at the time it was added to the cart
