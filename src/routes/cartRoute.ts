@@ -51,4 +51,9 @@ router.delete('/',validateJWT, async (req: ExtendRequest, res) => {
     res.status(response.statusCode).json(response);
 });
 
+
+router.post('/checkout',validateJWT, async (req: ExtendRequest, res) => {
+    // Placeholder for checkout logic
+    res.status(200).json({ message: 'Checkout functionality to be implemented' });
+});
 export default router;

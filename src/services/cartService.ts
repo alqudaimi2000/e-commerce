@@ -116,3 +116,4 @@ export const clearCartForUser = async (userId: string) => {
     const updatedCart = await cart.save();
     return { data: updatedCart, statusCode: 200 };
 }
+
