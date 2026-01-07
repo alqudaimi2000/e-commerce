@@ -86,7 +86,7 @@ export const loginUser = async ({ email, password }: loginParams) => {
  */
 const generateJWT = (firstName: string, lastName: string, email: string) => {
     // Sign JWT with user info, secret key, and 1-hour expiration
-    const token = jwt.sign({ firstName, lastName, email }, 'DaXrvh1UDN7u78BP8r0EEvuXRsk09T5C', { expiresIn: '1h' });
+    const token = jwt.sign({ firstName, lastName, email }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '1h' });
     return token;
 };
 

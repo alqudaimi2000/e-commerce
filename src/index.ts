@@ -3,6 +3,7 @@
  * Sets up Express application, connects to MongoDB, and configures routes.
  */
 
+import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import userRouter from "./routes/userRoute.js";
@@ -15,7 +16,7 @@ const app = express();
 const port = 3000;
 
 // Connect to MongoDB and start the server
-mongoose.connect('mongodb://localhost:27017/ecommerce')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce')
   .then(() => {
     console.log('Connected to MongoDB');
     seedInitialProducts(); // Seed initial products if not present

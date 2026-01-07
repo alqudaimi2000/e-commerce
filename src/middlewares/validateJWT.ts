@@ -13,7 +13,7 @@ const validateJWT = (req:ExtendRequest, res:Response, next:NextFunction) => {
     if (!token) {
         return  res.status(401).json({ message: 'Token missing' }); 
     }
-    jwt.verify(token, 'DaXrvh1UDN7u78BP8r0EEvuXRsk09T5C', async (err, payload) => {
+    jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret', async (err, payload) => {
         if (err) {
             return res.status(401).json({ message: 'Invalid token' });
         }
