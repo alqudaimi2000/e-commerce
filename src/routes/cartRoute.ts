@@ -1,5 +1,5 @@
 import express from 'express';
-import { addItemToCart, getActiveCartForUser } from '../services/cartService.js';
+import { addOrRemoveItemToCart, getActiveCartForUser, removeItemFromCart } from '../services/cartService.js';
 import validateJWT from '../middlewares/validateJWT.js';
 import type { ExtendRequest } from '../types/extendedRequest.js';
 const router = express.Router();
@@ -16,9 +16,31 @@ router.get('/',validateJWT, async (req: ExtendRequest, res) => {
 router.post('/items',validateJWT, async (req: ExtendRequest, res) => {
     const userId = req?.user?._id;
     const {productID, quantity} = req.body;
-    const response = await addItemToCart({ userId, productID, quantity });
+    const response = await addOrRemoveItemToCart({ userId, productID, quantity });
     res.status(response.statusCode).json(response);
 
+});
+
+router.put('/items',validateJWT, async (req: ExtendRequest, res) => {
+    // Update item quantity in cart
+
+    const userId = req?.user?._id;
+
+
+    const { productID, quantity } = req.body;
+    const cart = await getActiveCartForUser(userId);
+    const response = await addOrRemoveItemToCart({ userId, productID, quantity });
+    res.status(response.statusCode).json(response);
+});
+
+router.delete('/items',validateJWT, async (req: ExtendRequest, res) => {
+    // Remove item from cart
+    const userId = req?.user?._id;
+    const { productID } = req.body;
+
+    // To remove completely, pass a large negative quantity
+    const response = await removeItemFromCart({ userId, productID });
+    res.status(response.statusCode).json(response);
 });
 
 export default router;

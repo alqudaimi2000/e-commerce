@@ -30,13 +30,18 @@ export const getActiveCartForUser = async (userId: string) => {
     return cart;
 }
 
-interface AddItemToCartParams {
+interface AddOrRemoveItemToCartParams {
     userId: string;
     productID: any;
     quantity?: number;
 
 }
-export const addItemToCart = async ({ userId, productID, quantity }: AddItemToCartParams) => {
+
+interface RemoveItemFromCartParams {
+    userId: string;
+    productID: any;
+}
+export const addOrRemoveItemToCart = async ({ userId, productID, quantity }: AddOrRemoveItemToCartParams) => {
 
     const cart = await getActiveCartForUser(userId);
     // Check if the product already exists in the cart
@@ -49,27 +54,35 @@ export const addItemToCart = async ({ userId, productID, quantity }: AddItemToCa
     }
     
     const newQuantity = quantity || 1;
-    let totalQuantity = newQuantity;
     
     if (existsInCart) {
-        totalQuantity += existsInCart.quantity;
-    }
-    
-    // Check if total quantity exceeds stock
-    if (totalQuantity > product.stock) {
-        return { message: 'Insufficient stock', statusCode: 400 };
-    }
-    
-    if (existsInCart) {
-        // Update the existing item's quantity
-        existsInCart.quantity = totalQuantity;
+        const totalQuantity = existsInCart.quantity + newQuantity;
+        if (totalQuantity > 0) {
+            // Check stock only if increasing quantity
+            if (totalQuantity > existsInCart.quantity && totalQuantity > product.stock) {
+                return { message: 'Insufficient stock', statusCode: 400 };
+            }
+            // Update quantity
+            existsInCart.quantity = totalQuantity;
+        } else {
+            // Remove item if quantity <= 0
+            cart.products = cart.products.filter(item => item.productId.toString() !== productID.toString());
+        }
     } else {
-        // Add new item to cart
-        cart.products.push({
-            productId: productID,
-            quantity: newQuantity,
-            unitPrice: product.price,
-        });
+        if (newQuantity > 0) {
+            // Check stock for new item
+            if (newQuantity > product.stock) {
+                return { message: 'Insufficient stock', statusCode: 400 };
+            }
+            // Add new item
+            cart.products.push({
+                productId: productID,
+                quantity: newQuantity,
+                unitPrice: product.price,
+            });
+        } else {
+            return { message: 'Product not in cart', statusCode: 400 };
+        }
     }
     
     // Recalculate the total amount of the cart
@@ -81,3 +94,16 @@ export const addItemToCart = async ({ userId, productID, quantity }: AddItemToCa
     const updatedCart = await cart.save();
     return { data: updatedCart, statusCode: 200 };
 }
+
+export const removeItemFromCart = async ({ userId, productID }: RemoveItemFromCartParams) => {
+    const cart = await getActiveCartForUser(userId);
+    // Check if the product exists in the cart
+    const existsInCart = cart.products.find(item => item.productId.toString() === productID.toString());
+    if (!existsInCart) {
+        return { message: 'Product not in cart', statusCode: 400 };
+    }
+    // Remove item from cart
+    cart.products = cart.products.filter(item => item.productId.toString() !== productID.toString());
+     const updatedCart = await cart.save();
+    return { data: updatedCart, statusCode: 200 };
+}   
