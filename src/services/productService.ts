@@ -8,6 +8,7 @@ export const getAllProducts = async () => {
 }
 
 export const seedInitialProducts = async () => {
+    try {
     const initialProducts = [
         {
             imageUrl: 'https://picsum.photos/id/1/200/300',
@@ -37,5 +38,8 @@ export const seedInitialProducts = async () => {
         return;
     }
     await ProductModel.insertMany(initialProducts);
-    console.log('Initial products seeded to the database.');
+    console.log('Initial products seeded to the database.');}
+    catch (error) {
+        console.error('Error seeding initial products:', error);
+    }
 }

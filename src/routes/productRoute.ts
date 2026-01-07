@@ -5,10 +5,12 @@ import { getAllProducts } from '../services/productService.js';
 const router = express.Router();
 
 router.get('/', async (req: express.Request, res: express.Response) => {
-    const products = await getAllProducts();
-    res.status(200).json(products);
+    try{const products = await getAllProducts();
+    res.status(200).json(products);}
+    catch (error){
+        res.status(500).json({message:'Server Error'});
 
-
+}
    
 });
 

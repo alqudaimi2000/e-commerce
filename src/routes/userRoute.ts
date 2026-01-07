@@ -16,9 +16,12 @@ import { registerUser, loginUser } from '../services/userService.js';
  * Returns: JWT token on success, error message on failure.
  */
 router.post('/register', async (req: express.Request, res: express.Response) => {
-    const { firstName, lastName, email, password } = req.body;
+    try{const { firstName, lastName, email, password } = req.body;
     const result = await registerUser({ firstName, lastName, email, password });
-    res.status(result.statusCode).json(result.data);
+    res.status(result.statusCode).json(result.data);}
+    catch (error){
+        res.status(500).json({message:'Server Error'}); 
+}
 });
 
 /**
@@ -28,9 +31,12 @@ router.post('/register', async (req: express.Request, res: express.Response) => 
  * Returns: JWT token on success, error message on failure.
  */
 router.post('/login', async (req: express.Request, res: express.Response) => {
-    const { email, password } = req.body;
+    try{const { email, password } = req.body;
     const result = await loginUser({ email, password });
-    res.status(result.statusCode).json(result.data);
+    res.status(result.statusCode).json(result.data);}
+    catch (error){
+        res.status(500).json({message:'Server Error'}); 
+}
 });
 
 export default router;
