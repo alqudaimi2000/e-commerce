@@ -1,5 +1,5 @@
 import express from 'express';
-import { addOrRemoveItemToCart, clearCartForUser, getActiveCartForUser, removeItemFromCart,  } from '../services/cartService.js';
+import { addOrRemoveItemToCart, clearCartForUser, getActiveCartForUser, removeItemFromCart, checkout  } from '../services/cartService.js';
 import validateJWT from '../middlewares/validateJWT.js';
 import type { ExtendRequest } from '../types/extendedRequest.js';
 const router = express.Router();
@@ -54,6 +54,9 @@ router.delete('/',validateJWT, async (req: ExtendRequest, res) => {
 
 router.post('/checkout',validateJWT, async (req: ExtendRequest, res) => {
     // Placeholder for checkout logic
-    res.status(200).json({ message: 'Checkout functionality to be implemented' });
+    const  userId = req?.user?._id;
+    const address = req.body.address;
+    const response = await checkout({ userId, address });
+    res.status(200).json(response);
 });
 export default router;

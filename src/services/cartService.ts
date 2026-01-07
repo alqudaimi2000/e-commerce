@@ -1,4 +1,6 @@
 import CartModel from '../models/cartModel.js';
+import type { IOrderItem } from '../models/orderModel.js';
+import OrderModel from '../models/orderModel.js';
 import ProductModel from '../models/productModel.js';
 
 interface CreateCartForUser {
@@ -117,3 +119,50 @@ export const clearCartForUser = async (userId: string) => {
     return { data: updatedCart, statusCode: 200 };
 }
 
+interface CheckoutParams {
+    userId: string;
+    address: string;
+}
+export const checkout = async ({ userId, address }: CheckoutParams) => {
+    // Placeholder for checkout logic
+    if (!address) {
+        return { data: 'Address is required for checkout', statusCode: 400 };
+    }
+
+
+   
+    const cart = await getActiveCartForUser(userId);
+    if (cart.products.length === 0) {
+        return { data: 'Cart is empty', statusCode: 400 };
+    }
+    const orderItems: IOrderItem[] = [];
+    for (const item of cart.products) {
+        const product = await ProductModel.findById(item.productId);
+        if (!product) {
+            return { data: `Product with ID ${item.productId} not found`, statusCode: 404 };
+        }
+
+
+        const orderItem : IOrderItem= {
+            productName: product.name,
+            productImage: product.imageUrl,
+            price: item.unitPrice,
+            quantity: item.quantity,
+        };  
+
+        orderItems.push(orderItem);
+   
+}
+    const order = await OrderModel.create({
+        orderItems: orderItems,
+        totalAmount: cart.totalAmount,
+        address: address, // Use the provided address
+        userId: userId,
+    });
+    await order.save();
+    // Mark cart as completed
+    cart.status = 'completed';
+    await cart.save();  
+    return { data: order, statusCode: 200 };
+
+}
