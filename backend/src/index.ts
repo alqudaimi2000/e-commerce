@@ -10,7 +10,7 @@ import userRouter from "./routes/userRoute.js";
 import productRoute from './routes/productRoute.js';
 import { seedInitialProducts } from './services/productService.js';
 import cartRoute from './routes/cartRoute.js';
-
+import cors from 'cors';
 // Create Express application instance
 const app = express();
 const port = 3000;
@@ -29,13 +29,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce
   });
 
 
+app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Mount user routes at /user path
 app.use('/user', userRouter);
 
-app.use('/product', productRoute);
+app.use('/products', productRoute);
 
 app.use('/cart',cartRoute);
 // Root endpoint for API health check

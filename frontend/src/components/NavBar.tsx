@@ -11,7 +11,6 @@ import Avatar from '@mui/material/Avatar'
 // import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
-import AdbIcon from '@mui/icons-material/Adb'
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
@@ -38,7 +37,7 @@ function NavBar() {
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
-          <AdbIcon sx={{ display:'flex', mr: 1 }} />
+          
           <Typography
             variant="h6"
             noWrap
